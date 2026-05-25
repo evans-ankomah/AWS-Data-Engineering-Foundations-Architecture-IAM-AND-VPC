@@ -39,3 +39,23 @@ module "data_engineer_role" {
 
   tags = var.tags
 }
+
+# Role 2: GlueServiceRole
+# Assumed by AWS Glue jobs to read/write S3, log to CloudWatch, and
+# fetch connection credentials from Secrets Manager.
+module "glue_service_role" {
+  source = "./modules/iam_role"
+
+  name            = "GlueServiceRole"
+  description     = "Service role for AWS Glue ETL jobs (S3, CloudWatch, Secrets Manager)."
+  trusted_service = "glue.amazonaws.com"
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
+    "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+  ]
+
+  tags = var.tags
+}
