@@ -59,3 +59,24 @@ module "glue_service_role" {
 
   tags = var.tags
 }
+
+# Role 3: LambdaExecutionRole
+# Execution role for Lambda functions doing serverless data processing
+# against S3, DynamoDB, Kinesis, and Secrets Manager.
+module "lambda_execution_role" {
+  source = "./modules/iam_role"
+
+  name            = "LambdaExecutionRole"
+  description     = "Execution role for Lambda data-processing functions."
+  trusted_service = "lambda.amazonaws.com"
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+    "arn:aws:iam::aws:policy/AmazonKinesisFullAccess",
+    "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+  ]
+
+  tags = var.tags
+}

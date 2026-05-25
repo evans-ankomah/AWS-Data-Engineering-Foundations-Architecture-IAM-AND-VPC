@@ -7,3 +7,8 @@ output "glue_service_role_arn" {
   description = "ARN of the GlueServiceRole."
   value       = module.glue_service_role.arn
 }
+
+output "lambda_execution_role_arn" {
+  description = "ARN of the LambdaExecutionRole."
+  value       = module.lambda_execution_role.arn
+}
