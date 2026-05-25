@@ -12,3 +12,8 @@ output "lambda_execution_role_arn" {
   description = "ARN of the LambdaExecutionRole."
   value       = module.lambda_execution_role.arn
 }
+
+output "redshift_iam_role_arn" {
+  description = "ARN of the RedshiftIAMRole."
+  value       = module.redshift_iam_role.arn
+}

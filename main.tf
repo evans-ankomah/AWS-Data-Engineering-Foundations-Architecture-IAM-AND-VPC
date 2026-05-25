@@ -80,3 +80,21 @@ module "lambda_execution_role" {
 
   tags = var.tags
 }
+
+# Role 4: RedshiftIAMRole
+# Attached to Redshift clusters so COPY/UNLOAD commands can read from
+# and write to S3, and so the cluster can log to CloudWatch.
+module "redshift_iam_role" {
+  source = "./modules/iam_role"
+
+  name            = "RedshiftIAMRole"
+  description     = "Role assumed by Redshift for S3 COPY/UNLOAD and CloudWatch logging."
+  trusted_service = "redshift.amazonaws.com"
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
+  ]
+
+  tags = var.tags
+}
