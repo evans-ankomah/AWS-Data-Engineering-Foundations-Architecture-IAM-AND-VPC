@@ -98,3 +98,25 @@ module "redshift_iam_role" {
 
   tags = var.tags
 }
+
+# Role 5: AnalystReadOnlyRole
+# Read-only role for analysts running queries in Athena/Redshift and
+# building dashboards in QuickSight.
+module "analyst_read_only_role" {
+  source = "./modules/iam_role"
+
+  name            = "AnalystReadOnlyRole"
+  description     = "Read-only access for analysts: Athena, Redshift, QuickSight, S3."
+  trusted_service = "ec2.amazonaws.com"
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonAthenaFullAccess",
+    "arn:aws:iam::aws:policy/AmazonRedshiftReadOnlyAccess",
+    # NOTE: AmazonQuickSightReadOnlyAccess is deprecated; AWS recommends
+    # managing QuickSight access via QuickSight's own group/role system.
+    "arn:aws:iam::aws:policy/AmazonQuickSightReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+  ]
+
+  tags = var.tags
+}

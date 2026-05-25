@@ -17,3 +17,8 @@ output "redshift_iam_role_arn" {
   description = "ARN of the RedshiftIAMRole."
   value       = module.redshift_iam_role.arn
 }
+
+output "analyst_read_only_role_arn" {
+  description = "ARN of the AnalystReadOnlyRole."
+  value       = module.analyst_read_only_role.arn
+}
