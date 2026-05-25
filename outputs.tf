@@ -1,1 +1,4 @@
-# Role ARNs and custom policy ARN are added as each role is wired in.
+output "data_engineer_role_arn" {
+  description = "ARN of the DataEngineerRole."
+  value       = module.data_engineer_role.arn
+}

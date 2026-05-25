@@ -16,3 +16,26 @@ provider "aws" {
     tags = var.tags
   }
 }
+
+# Role 1: DataEngineerRole
+# Main role used by data engineers for day-to-day pipeline work across
+# S3, Glue, Redshift, EMR, Kinesis, Lambda, and CloudWatch.
+module "data_engineer_role" {
+  source = "./modules/iam_role"
+
+  name            = "DataEngineerRole"
+  description     = "Data engineer role: S3, Glue, Redshift, EMR, Kinesis, Lambda, CloudWatch."
+  trusted_service = "ec2.amazonaws.com"
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess",                 # lab name: AWSGlueFullAccess
+    "arn:aws:iam::aws:policy/AmazonRedshiftFullAccess",
+    "arn:aws:iam::aws:policy/service-role/AmazonEMRFullAccessPolicy_v2",
+    "arn:aws:iam::aws:policy/AmazonKinesisFullAccess",
+    "arn:aws:iam::aws:policy/AWSLambda_FullAccess",                     # lab name: AWSLambdaFullAccess (renamed by AWS)
+    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
+  ]
+
+  tags = var.tags
+}
