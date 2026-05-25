@@ -22,3 +22,8 @@ output "analyst_read_only_role_arn" {
   description = "ARN of the AnalystReadOnlyRole."
   value       = module.analyst_read_only_role.arn
 }
+
+output "data_lake_bucket_access_policy_arn" {
+  description = "ARN of the custom DataLakeBucketAccessPolicy."
+  value       = aws_iam_policy.data_lake_bucket_access.arn
+}

@@ -37,6 +37,8 @@ module "data_engineer_role" {
     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
   ]
 
+  custom_policy_arns = [aws_iam_policy.data_lake_bucket_access.arn]
+
   tags = var.tags
 }
 
@@ -56,6 +58,8 @@ module "glue_service_role" {
     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
     "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
   ]
+
+  custom_policy_arns = [aws_iam_policy.data_lake_bucket_access.arn]
 
   tags = var.tags
 }
@@ -77,6 +81,8 @@ module "lambda_execution_role" {
     "arn:aws:iam::aws:policy/AmazonKinesisFullAccess",
     "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
   ]
+
+  custom_policy_arns = [aws_iam_policy.data_lake_bucket_access.arn]
 
   tags = var.tags
 }
@@ -117,6 +123,53 @@ module "analyst_read_only_role" {
     "arn:aws:iam::aws:policy/AmazonQuickSightReadOnlyAccess",
     "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
   ]
+
+  tags = var.tags
+}
+
+# Custom policy: DataLakeBucketAccessPolicy
+# Scopes access to data-lake-* buckets and enforces SSE-S3 (AES256)
+# encryption on uploads. The explicit Deny on unencrypted PutObject
+# overrides the broader Allow from AmazonS3FullAccess on attached roles.
+resource "aws_iam_policy" "data_lake_bucket_access" {
+  name        = "DataLakeBucketAccessPolicy"
+  description = "Restrict access to data-lake-* buckets and block unencrypted uploads."
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "ListDataLakeBucket"
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+        ]
+        Resource = "arn:aws:s3:::data-lake-*"
+      },
+      {
+        Sid    = "ReadWriteDataLakeObjects"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+        ]
+        Resource = "arn:aws:s3:::data-lake-*/*"
+      },
+      {
+        Sid      = "DenyUnencryptedUploads"
+        Effect   = "Deny"
+        Action   = "s3:PutObject"
+        Resource = "arn:aws:s3:::data-lake-*/*"
+        Condition = {
+          StringNotEquals = {
+            "s3:x-amz-server-side-encryption" = "AES256"
+          }
+        }
+      },
+    ]
+  })
 
   tags = var.tags
 }
